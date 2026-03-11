@@ -1,0 +1,249 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+@import '@fontsource/fira-mono';
+
+@theme {
+  /* Colors — Burgundy */
+  --color-burgundy-50:  #fdf2f4;
+  --color-burgundy-100: #fce7ea;
+  --color-burgundy-200: #f8d0d8;
+  --color-burgundy-300: #f2a8b5;
+  --color-burgundy-400: #e97589;
+  --color-burgundy-500: #dc4460;
+  --color-burgundy-600: #c42a48;
+  --color-burgundy-700: #a51f3a;
+  --color-burgundy-800: #8a1d36;
+  --color-burgundy-900: #761c33;
+  --color-burgundy-950: #420a18;
+
+  /* Colors — Ivory */
+  --color-ivory-50:  #fdfbf5;
+  --color-ivory-100: #faf5e8;
+  --color-ivory-200: #f5ecd2;
+  --color-ivory-300: #ecddb0;
+  --color-ivory-400: #e1c984;
+  --color-ivory-500: #d4b05a;
+  --color-ivory-600: #c09040;
+  --color-ivory-700: #a07332;
+  --color-ivory-800: #835c2d;
+  --color-ivory-900: #6c4c28;
+
+  /* Colors — Gold */
+  --color-gold-300: #f0d080;
+  --color-gold-400: #e8c04a;
+  --color-gold-500: #d4a017;
+  --color-gold-600: #b8860b;
+  --color-gold-700: #9a6f08;
+
+  /* Colors — Velvet */
+  --color-velvet-600: #5c2030;
+  --color-velvet-700: #3e1820;
+  --color-velvet-800: #2d1118;
+  --color-velvet-900: #1a0a0f;
+
+  /* Fonts */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-serif:   'Playfair Display', Georgia, serif;
+  --font-body:    'EB Garamond', Georgia, serif;
+
+  /* Shadows */
+  --shadow-baroque: 0 4px 32px rgba(26,10,15,0.35), 0 1px 8px rgba(212,160,23,0.15);
+  --shadow-gold:    0 2px 16px rgba(212,160,23,0.4);
+
+  /* Animations */
+  --animate-fade-in:  fadeIn 0.8s ease forwards;
+  --animate-slide-up: slideUp 0.7s ease forwards;
+  --animate-shimmer:  shimmer 2.5s infinite;
+
+  @keyframes fadeIn {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes slideUp {
+    0%   { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.6; }
+  }
+}
+
+/* base style */
+@layer base {
+  :root {
+    --gold: #d4a017;
+    --gold-light: #e8c04a;
+    --burgundy: #8a1d36;
+    --ivory: #faf5e8;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #1a0a0f;
+    color: #faf5e8;
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+  ::selection {
+    background-color: #d4a017;
+    color: #1a0a0f;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #1a0a0f;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #d4a017;
+    border-radius: 4px;
+  }
+}
+
+/* class component */
+@layer components {
+  .ornament {
+    display: inline-block;
+    color: var(--gold);
+    font-size: 1.2em;
+    line-height: 1;
+  }
+
+  .divider-baroque {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .divider-baroque::before,
+  .divider-baroque::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #d4a017, transparent);
+  }
+
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center gap-2 px-8 py-3.5 
+           font-serif tracking-widest text-sm uppercase 
+           text-[#1a0a0f] bg-[#d4a017] border border-[#e8c04a] 
+           transition-all duration-300 overflow-hidden cursor-pointer;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .btn-primary:hover::before {
+    left: 100%;
+  }
+
+  .btn-primary:hover {
+    background-color: #e8c04a;
+    box-shadow: 0 2px 16px rgba(212,160,23,0.4);
+    transform: scale(1.05);
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-3.5 
+           font-serif tracking-widest text-sm uppercase 
+           text-[#e8c04a] border border-[#9a6f08] 
+           transition-all duration-300 cursor-pointer;
+  }
+
+  .btn-outline:hover {
+    background-color: #d4a017;
+    color: #1a0a0f;
+    border-color: #e8c04a;
+  }
+
+  .card-baroque {
+    @apply relative bg-[#2d1118] border border-[#9a6f08]/30 overflow-hidden transition-all duration-500;
+  }
+
+  .card-baroque:hover {
+    border-color: rgba(212,160,23,0.6);
+    box-shadow: 0 4px 32px rgba(26,10,15,0.35), 0 1px 8px rgba(212,160,23,0.15);
+    transform: translateY(-4px);
+  }
+
+  .input-baroque {
+    @apply w-full bg-[#2d1118] border border-[#9a6f08]/40 text-[#faf5e8] 
+           px-4 py-3 text-base 
+           focus:outline-none focus:border-[#d4a017] transition-colors duration-200;
+    font-family: 'EB Garamond', Georgia, serif;
+  }
+
+  .input-baroque::placeholder {
+    color: rgba(250, 245, 232, 0.3);
+  }
+
+  .section-title {
+    @apply text-4xl md:text-5xl text-[#faf5e8] leading-tight;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .section-subtitle {
+    @apply text-[#a07332] text-lg leading-relaxed;
+    font-family: 'EB Garamond', Georgia, serif;
+  }
+
+  .gold-text {
+    color: #d4a017;
+  }
+}
+
+/* decoration */
+.baroque-corner::before,
+.baroque-corner::after {
+  content: '❧';
+  position: absolute;
+  color: #d4a017;
+  opacity: 0.4;
+  font-size: 1.5rem;
+}
+.baroque-corner::before { top: 8px; left: 12px; }
+.baroque-corner::after  { bottom: 8px; right: 12px; transform: rotate(180deg); }
+
+.noise-overlay {
+  position: relative;
+}
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.06;
+}
+
+/* delay section */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+.page-enter {
+  animation: fadeIn 0.5s ease forwards;
+}
