@@ -2,6 +2,10 @@
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
+## Project docs
+
+- Phase 1 backend setup: `docs/PHASE1_SETUP.md`
+
 ## Creating a project
 
 If you're seeing this, you've probably already done this step. Congrats!
