@@ -161,16 +161,16 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div>
-            <label class="text-xs tracking-widest uppercase text-gold-600 font-body block mb-2">Check-in</label>
-            <input type="date" bind:value={checkIn} class="input-baroque" />
+            <label for="quick-checkin" class="text-xs tracking-widest uppercase text-gold-600 font-body block mb-2">Check-in</label>
+            <input id="quick-checkin" type="date" bind:value={checkIn} class="input-baroque" />
           </div>
           <div>
-            <label class="text-xs tracking-widest uppercase text-gold-600 font-body block mb-2">Check-out</label>
-            <input type="date" bind:value={checkOut} class="input-baroque" />
+            <label for="quick-checkout" class="text-xs tracking-widest uppercase text-gold-600 font-body block mb-2">Check-out</label>
+            <input id="quick-checkout" type="date" bind:value={checkOut} class="input-baroque" />
           </div>
           <div>
-            <label class="text-xs tracking-widest uppercase text-gold-600 font-body block mb-2">Tamu</label>
-            <select bind:value={guests} class="input-baroque cursor-pointer">
+            <label for="quick-guests" class="text-xs tracking-widest uppercase text-gold-600 font-body block mb-2">Tamu</label>
+            <select id="quick-guests" bind:value={guests} class="input-baroque cursor-pointer">
               <option value="1">1 Tamu</option>
               <option value="2">2 Tamu</option>
               <option value="3">3 Tamu</option>
@@ -178,8 +178,8 @@
             </select>
           </div>
           <div>
-            <label class="text-xs tracking-widest uppercase text-gold-600 font-body block mb-2">Tipe Kamar</label>
-            <select bind:value={roomType} class="input-baroque cursor-pointer">
+            <label for="quick-roomtype" class="text-xs tracking-widest uppercase text-gold-600 font-body block mb-2">Tipe Kamar</label>
+            <select id="quick-roomtype" bind:value={roomType} class="input-baroque cursor-pointer">
               <option value="">Semua Tipe</option>
               <option value="superior">Superior Klasik</option>
               <option value="deluxe">Deluxe Victoria</option>

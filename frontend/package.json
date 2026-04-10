@@ -8,10 +8,18 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
+		"db:setup": "node scripts/db-setup.mjs",
+		"db:seed": "node scripts/db-setup.mjs --seed-only",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"lint": "prettier --check .",
 		"format": "prettier --write ."
+	},
+	"dependencies": {
+		"bcryptjs": "^3.0.3",
+		"dotenv": "^17.2.3",
+		"jsonwebtoken": "^9.0.2",
+		"pg": "^8.16.3"
 	},
 	"devDependencies": {
 		"@fontsource/fira-mono": "^5.2.7",

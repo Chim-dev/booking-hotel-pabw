@@ -1,17 +1,26 @@
-<script>
+﻿<script>
   import { tick } from 'svelte';
+  import { API_BASE_URL } from '$lib/config/api';
+
+  /**
+   * @typedef {'assistant' | 'user'} ChatRole
+   */
+
+  /**
+   * @typedef {{ role: ChatRole; content: string }} ChatMessage
+   */
 
   let isOpen     = $state(false);
   let loading    = $state(false);
   let input      = $state('');
-  let messagesEl = $state(null);
+  let messagesEl = $state(/** @type {HTMLDivElement | null} */ (null));
 
-  const WELCOME = {
+  const WELCOME = /** @type {ChatMessage} */ ({
     role: 'assistant',
-    content: 'Selamat datang di Grand Maison ✦\n\nSaya **Isabelle**, Concierge AI Anda. Saya siap membantu Anda memilih kamar, menghitung harga, atau menjawab pertanyaan seputar hotel kami.\n\nAda yang bisa saya bantu hari ini?'
-  };
+    content: 'Selamat datang di Grand Maison.\n\nSaya **Isabelle**, Concierge AI Anda. Saya siap membantu Anda memilih kamar, menghitung harga, atau menjawab pertanyaan seputar hotel kami.\n\nAda yang bisa saya bantu hari ini?'
+  });
 
-  let messages = $state([WELCOME]);
+  let messages = $state(/** @type {ChatMessage[]} */ ([WELCOME]));
 
   const suggestions = [
     'Kamar apa yang tersedia?',
@@ -35,9 +44,10 @@
         .filter((_, i) => i > 0)
         .map(m => ({ role: m.role, content: m.content }));
 
-      const res  = await fetch('/api/chat', {
+      const res  = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ messages: history }),
       });
 
@@ -58,6 +68,9 @@
     }
   }
 
+  /**
+   * @param {KeyboardEvent} e
+   */
   function handleKey(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -69,11 +82,17 @@
     if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
+  /**
+   * @param {string} s
+   */
   function useSuggestion(s) {
     input = s;
     send();
   }
 
+  /**
+   * @param {string} text
+   */
   function formatMessage(text) {
     return text
       .replace(/&/g, '&amp;')
@@ -83,21 +102,24 @@
       .replace(/\n/g, '<br/>');
   }
 
+  /**
+   * @param {string} text
+   */
   function extractBookingLink(text) {
     const match = text.match(/\/booking\?[^\s"')]+/);
     return match ? match[0] : null;
   }
 
-  $derived: {
+  $effect(() => {
     if (isOpen) {
       tick().then(scrollBottom);
     }
-  }
+  });
 </script>
 
-<!-- ════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      FLOATING BUTTON
-════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div class="cw-fab-wrap">
 
   {#if !isOpen}
@@ -122,21 +144,21 @@
   </button>
 </div>
 
-<!-- ════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      CHAT PANEL
-════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 {#if isOpen}
   <div class="cw-panel">
 
     <!-- gold hairline top -->
     <div class="cw-hairline"></div>
 
-    <!-- ── Header ── -->
+    <!-- â”€â”€ Header â”€â”€ -->
     <div class="cw-header">
       <div class="cw-avatar">I</div>
       <div class="cw-header-info">
         <div class="cw-name">Isabelle</div>
-        <div class="cw-sub">Concierge AI · Grand Maison</div>
+        <div class="cw-sub">Concierge AI - Grand Maison</div>
       </div>
       <div class="cw-status">
         <span class="cw-dot"></span>
@@ -144,7 +166,7 @@
       </div>
     </div>
 
-    <!-- ── Messages ── -->
+    <!-- â”€â”€ Messages â”€â”€ -->
     <div class="cw-messages" bind:this={messagesEl}>
       {#each messages as msg (msg)}
         <div class="cw-msg-row" class:cw-msg-row--user={msg.role === 'user'}>
@@ -158,7 +180,7 @@
 
             {#if msg.role === 'assistant' && extractBookingLink(msg.content)}
               <a href={extractBookingLink(msg.content)} class="cw-booking-btn">
-                Lanjut ke Booking →
+                Lanjut ke Booking ->
               </a>
             {/if}
           </div>
@@ -177,7 +199,7 @@
       {/if}
     </div>
 
-    <!-- ── Quick suggestions (hanya saat awal) ── -->
+    <!-- â”€â”€ Quick suggestions (hanya saat awal) â”€â”€ -->
     {#if messages.length === 1 && !loading}
       <div class="cw-suggestions">
         {#each suggestions as s}
@@ -188,7 +210,7 @@
       </div>
     {/if}
 
-    <!-- ── Input ── -->
+    <!-- â”€â”€ Input â”€â”€ -->
     <div class="cw-input-area">
       <textarea
         class="cw-textarea"
@@ -217,11 +239,11 @@
   </div>
 {/if}
 
-<!-- ════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      STYLES
-════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <style>
-  /* ── Keyframes ── */
+  /* â”€â”€ Keyframes â”€â”€ */
   @keyframes bounce-dot {
     0%, 60%, 100% { transform: translateY(0);   opacity: 0.35; }
     30%           { transform: translateY(-5px); opacity: 1; }
@@ -232,9 +254,9 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ════════════════════
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      FAB (Floating Button)
-  ════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .cw-fab-wrap {
     position: fixed;
     bottom: 1.5rem;
@@ -290,9 +312,9 @@
     transform: translateY(-1px);
   }
 
-  /* ════════════════════
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      CHAT PANEL
-  ════════════════════ */
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
   .cw-panel {
     position: fixed;
     bottom: 5.5rem;
@@ -310,7 +332,7 @@
     animation: fade-up 0.25s ease forwards;
   }
 
-  /* ── Hairlines ── */
+  /* â”€â”€ Hairlines â”€â”€ */
   .cw-hairline {
     height: 1px;
     flex-shrink: 0;
@@ -320,7 +342,7 @@
     background: linear-gradient(to right, transparent, rgba(212, 160, 23, 0.22), transparent);
   }
 
-  /* ── Header ── */
+  /* â”€â”€ Header â”€â”€ */
   .cw-header {
     display: flex;
     align-items: center;
@@ -381,7 +403,7 @@
     color: rgba(74, 222, 128, 0.52);
   }
 
-  /* ── Messages ── */
+  /* â”€â”€ Messages â”€â”€ */
   .cw-messages {
     flex: 1;
     overflow-y: auto;
@@ -423,7 +445,7 @@
     color: #0d0508;
   }
 
-  /* ── Typing dots ── */
+  /* â”€â”€ Typing dots â”€â”€ */
   .cw-typing {
     display: flex;
     align-items: center;
@@ -439,7 +461,7 @@
     animation: bounce-dot 1.2s infinite;
   }
 
-  /* ── Booking CTA ── */
+  /* â”€â”€ Booking CTA â”€â”€ */
   .cw-booking-btn {
     display: inline-flex;
     align-items: center;
@@ -460,7 +482,7 @@
     border-color: rgba(212, 160, 23, 0.55);
   }
 
-  /* ── Quick suggestions ── */
+  /* â”€â”€ Quick suggestions â”€â”€ */
   .cw-suggestions {
     padding: 0 0.85rem 0.65rem;
     display: flex;
@@ -485,7 +507,7 @@
     background: rgba(212, 160, 23, 0.08);
   }
 
-  /* ── Input area ── */
+  /* â”€â”€ Input area â”€â”€ */
   .cw-input-area {
     display: flex;
     align-items: flex-end;
@@ -527,7 +549,7 @@
   .cw-textarea::-webkit-scrollbar { width: 2px; }
   .cw-textarea::-webkit-scrollbar-thumb { background: rgba(212,160,23,0.15); }
 
-  /* ── Send button ── */
+  /* â”€â”€ Send button â”€â”€ */
   .cw-send {
     width: 1.95rem;
     height: 1.95rem;
@@ -554,3 +576,5 @@
     transform: scale(1.05);
   }
 </style>
+
+

@@ -1,4 +1,7 @@
-<script>
+﻿<script>
+  import { goto } from '$app/navigation';
+  import { API_BASE_URL } from '$lib/config/api';
+
   let email = $state('');
   let password = $state('');
   let showPassword = $state(false);
@@ -13,21 +16,40 @@
       error = 'Mohon isi semua kolom yang diperlukan.';
       return;
     }
+
     error = '';
     loading = true;
-    await new Promise(r => setTimeout(r, 1800));
-    loading = false;
-    error = 'Email atau kata sandi tidak valid.';
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        error = data.error ?? 'Gagal login. Silakan coba lagi.';
+        return;
+      }
+
+      await goto('/booking');
+    } catch {
+      error = 'Tidak dapat terhubung ke server backend.';
+    } finally {
+      loading = false;
+    }
   }
 </script>
 
 <svelte:head>
-  <title>Masuk — Grand Maison</title>
+  <title>Masuk â€” Grand Maison</title>
 </svelte:head>
 
-<!-- ═══════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      ROOT
-═══════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div class="relative min-h-screen flex items-center justify-center p-4 overflow-hidden"
   style="background:#09040c;">
 
@@ -49,18 +71,18 @@
   <div class="absolute bottom-0 inset-x-0 h-px"
     style="background:linear-gradient(to right,transparent,rgba(212,160,23,0.35),transparent);"></div>
 
-  <!-- ═══════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        CARD
-  ═══════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <div class="relative z-10 w-full max-w-3xl grid lg:grid-cols-[0.95fr_1.05fr]"
     style="
       box-shadow: 0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(212,160,23,0.13);
       min-height: 580px;
     ">
 
-    <!-- ──────────────────────
-         LEFT — Dekoratif
-    ────────────────────── -->
+    <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+         LEFT â€” Dekoratif
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <div class="hidden lg:flex flex-col justify-between p-11 relative overflow-hidden"
       style="background:linear-gradient(145deg,#160a0d 0%,#0e0508 55%,#170c05 100%);">
 
@@ -76,7 +98,7 @@
 
       <!-- Ghost ornament -->
       <div class="absolute inset-0 flex items-center justify-center select-none pointer-events-none"
-        style="font-family:'Cormorant Garamond',serif;font-size:22rem;line-height:1;color:rgba(212,160,23,0.022);">❦</div>
+        style="font-family:'Cormorant Garamond',serif;font-size:22rem;line-height:1;color:rgba(212,160,23,0.022);">â¦</div>
 
       <!-- Est. -->
       <p style="font-family:'EB Garamond',serif;font-size:0.58rem;letter-spacing:0.48em;text-transform:uppercase;color:rgba(212,160,23,0.32);">
@@ -85,7 +107,7 @@
 
       <!-- Logo + tagline -->
       <div class="relative z-10">
-        <div style="color:rgba(212,160,23,0.22);font-size:1.3rem;margin-bottom:1.4rem;line-height:1;font-family:'Cormorant Garamond',serif;">✦</div>
+        <div style="color:rgba(212,160,23,0.22);font-size:1.3rem;margin-bottom:1.4rem;line-height:1;font-family:'Cormorant Garamond',serif;">âœ¦</div>
 
         <h1 style="font-family:'Cormorant Garamond',serif;font-size:3.6rem;line-height:0.93;font-weight:300;color:#ede0cc;letter-spacing:-0.02em;">
           Grand
@@ -96,7 +118,7 @@
 
         <div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:1.6rem;">
           <div style="flex:1;height:1px;background:rgba(212,160,23,0.14);"></div>
-          <span style="color:rgba(212,160,23,0.25);font-size:0.65rem;font-family:'Cormorant Garamond',serif;">❧</span>
+          <span style="color:rgba(212,160,23,0.25);font-size:0.65rem;font-family:'Cormorant Garamond',serif;">â§</span>
           <div style="flex:1;height:1px;background:rgba(212,160,23,0.14);"></div>
         </div>
 
@@ -116,9 +138,9 @@
       </div>
     </div>
 
-    <!-- ──────────────────────
-         RIGHT — Form
-    ────────────────────── -->
+    <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+         RIGHT â€” Form
+    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <div class="flex flex-col justify-center px-9 py-12 relative"
       style="background:#0c0508;">
 
@@ -128,7 +150,7 @@
 
       <!-- Mobile logo -->
       <div class="lg:hidden text-center mb-10">
-        <div style="color:rgba(212,160,23,0.28);font-size:1.1rem;margin-bottom:0.65rem;font-family:'Cormorant Garamond',serif;">✦</div>
+        <div style="color:rgba(212,160,23,0.28);font-size:1.1rem;margin-bottom:0.65rem;font-family:'Cormorant Garamond',serif;">âœ¦</div>
         <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:#ede0cc;font-weight:300;">
           Grand <em style="color:#d4a017;">Maison</em>
         </h2>
@@ -137,7 +159,7 @@
       <!-- Heading -->
       <div style="margin-bottom:2.25rem;">
         <p style="font-family:'EB Garamond',serif;font-size:0.56rem;letter-spacing:0.46em;text-transform:uppercase;color:rgba(212,160,23,0.38);margin-bottom:0.7rem;">
-          ✦ &nbsp; Portal Tamu
+          âœ¦ &nbsp; Portal Tamu
         </p>
         <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:#ede0cc;font-weight:300;line-height:1.1;margin-bottom:0.7rem;">
           Masuk ke Akun Anda
@@ -149,12 +171,12 @@
       {#if error}
         <div style="margin-bottom:1.5rem;padding:0.6rem 0.9rem;border-left:2px solid rgba(200,60,75,0.5);background:rgba(200,60,75,0.05);">
           <p style="font-family:'EB Garamond',serif;font-size:0.8rem;font-style:italic;color:rgba(190,100,115,0.85);line-height:1.5;">
-            ⚠ &nbsp;{error}
+            âš  &nbsp;{error}
           </p>
         </div>
       {/if}
 
-      <!-- ── Email ── -->
+      <!-- â”€â”€ Email â”€â”€ -->
       <div style="margin-bottom:1.6rem;">
         <label for="em"
           style="display:block;font-family:'EB Garamond',serif;font-size:0.56rem;letter-spacing:0.38em;text-transform:uppercase;margin-bottom:0.55rem;transition:color 0.25s;color:{focused==='email'?'rgba(212,160,23,0.6)':'rgba(140,88,28,0.55)'};">
@@ -162,8 +184,8 @@
         </label>
         <div style="position:relative;">
           <input id="em" type="email" bind:value={email}
-            on:focus={()=>focused='email'} on:blur={()=>focused=''}
-            on:keydown={(e)=>e.key==='Enter'&&handleLogin()}
+            onfocus={() => focused='email'} onblur={() => focused=''}
+            onkeydown={(e) => e.key === 'Enter' && handleLogin()}
             placeholder="nama@contoh.com" autocomplete="email"
             class="login-input"
             style="border-bottom-color:{focused==='email'?'rgba(212,160,23,0.45)':'rgba(80,38,12,0.7)'};"
@@ -174,7 +196,7 @@
         </div>
       </div>
 
-      <!-- ── Password ── -->
+      <!-- â”€â”€ Password â”€â”€ -->
       <div style="margin-bottom:1.25rem;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.55rem;">
           <label for="pw"
@@ -187,13 +209,13 @@
         </div>
         <div style="position:relative;">
           <input id="pw" type={showPassword?'text':'password'} bind:value={password}
-            on:focus={()=>focused='pw'} on:blur={()=>focused=''}
-            on:keydown={(e)=>e.key==='Enter'&&handleLogin()}
-            placeholder="••••••••" autocomplete="current-password"
+            onfocus={() => focused='pw'} onblur={() => focused=''}
+            onkeydown={(e) => e.key === 'Enter' && handleLogin()}
+            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password"
             class="login-input"
             style="padding-right:1.75rem;border-bottom-color:{focused==='pw'?'rgba(212,160,23,0.45)':'rgba(80,38,12,0.7)'};"
           />
-          <button type="button" on:click={()=>showPassword=!showPassword}
+          <button type="button" onclick={() => showPassword=!showPassword}
             style="position:absolute;right:0;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0.1rem;color:rgba(140,88,28,0.4);line-height:0;">
             {#if showPassword}
               <svg style="width:0.85rem;height:0.85rem;fill:none;stroke:currentColor;" viewBox="0 0 24 24">
@@ -209,7 +231,7 @@
         </div>
       </div>
 
-      <!-- ── Remember ── -->
+      <!-- â”€â”€ Remember â”€â”€ -->
       <label style="display:flex;align-items:center;gap:0.55rem;cursor:pointer;margin-bottom:2rem;">
         <input type="checkbox" style="width:0.7rem;height:0.7rem;accent-color:#d4a017;cursor:pointer;"/>
         <span style="font-family:'EB Garamond',serif;font-size:0.7rem;color:rgba(115,72,22,0.5);">
@@ -217,8 +239,8 @@
         </span>
       </label>
 
-      <!-- ── Submit ── -->
-      <button on:click={handleLogin} disabled={loading} class="btn-gold">
+      <!-- â”€â”€ Submit â”€â”€ -->
+      <button onclick={handleLogin} disabled={loading} class="btn-gold">
         {#if loading}
           <svg style="width:0.7rem;height:0.7rem;animation:spin 1s linear infinite;fill:none;stroke:currentColor;" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10" stroke-width="4" style="opacity:0.25;"/>
@@ -233,19 +255,19 @@
         {/if}
       </button>
 
-      <!-- ── Divider ── -->
+      <!-- â”€â”€ Divider â”€â”€ -->
       <div style="display:flex;align-items:center;gap:0.85rem;margin:1.4rem 0;">
         <div style="flex:1;height:1px;background:rgba(55,22,8,0.9);"></div>
         <span style="font-family:'EB Garamond',serif;font-size:0.53rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(80,40,12,0.5);">atau</span>
         <div style="flex:1;height:1px;background:rgba(55,22,8,0.9);"></div>
       </div>
 
-      <!-- ── Guest ── -->
+      <!-- â”€â”€ Guest â”€â”€ -->
       <a href="/booking" class="btn-ghost">
         Lanjutkan sebagai Tamu
       </a>
 
-      <!-- ── Footer links ── -->
+      <!-- â”€â”€ Footer links â”€â”€ -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.75rem;">
         <p style="font-family:'EB Garamond',serif;font-size:0.68rem;font-style:italic;color:rgba(95,55,15,0.45);">
           Belum punya akun?
@@ -255,7 +277,7 @@
         </p>
         <a href="/" class="subtle-link"
           style="font-family:'EB Garamond',serif;font-size:0.53rem;letter-spacing:0.32em;text-transform:uppercase;">
-          ← Beranda
+          â† Beranda
         </a>
       </div>
 
@@ -269,7 +291,7 @@
     to   { transform: rotate(360deg); }
   }
 
-  /* ── Input underline style ── */
+  /* â”€â”€ Input underline style â”€â”€ */
   :global(.login-input) {
     width: 100%;
     background: transparent;
@@ -297,7 +319,7 @@
     transition: background-color 9999s;
   }
 
-  /* ── Primary button ── */
+  /* â”€â”€ Primary button â”€â”€ */
   :global(.btn-gold) {
     width: 100%;
     display: flex;
@@ -324,7 +346,7 @@
     cursor: not-allowed;
   }
 
-  /* ── Ghost button ── */
+  /* â”€â”€ Ghost button â”€â”€ */
   :global(.btn-ghost) {
     width: 100%;
     display: flex;
@@ -345,7 +367,7 @@
     color: rgba(212, 160, 23, 0.52);
   }
 
-  /* ── Subtle link ── */
+  /* â”€â”€ Subtle link â”€â”€ */
   :global(.subtle-link) {
     color: rgba(212, 160, 23, 0.45);
     text-decoration: none;
@@ -357,3 +379,4 @@
     border-color: rgba(212, 160, 23, 0.4);
   }
 </style>
+
