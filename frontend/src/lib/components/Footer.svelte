@@ -30,15 +30,7 @@
         </ul>
       </div>
 
-      <!-- Services -->
-      <div>
-        <h4 class="font-serif text-gold-500 tracking-widest text-xs uppercase mb-5">Layanan</h4>
-        <ul class="space-y-3 font-body text-sm text-ivory-600">
-          {#each ['Concierge 24/7', 'Spa & Wellness', 'Ballroom & Event', 'Fine Dining', 'Butler Service'] as item}
-            <li><a href="/" class="hover:text-gold-400 transition-colors">{item}</a></li>
-          {/each}
-        </ul>
-      </div>
+      
 
       <!-- Contact -->
       <div>
