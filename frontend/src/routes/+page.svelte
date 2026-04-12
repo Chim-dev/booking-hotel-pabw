@@ -4,39 +4,6 @@
   let visible = false;
   onMount(() => { setTimeout(() => visible = true, 100); });
 
-  const rooms = [
-    {
-      name: 'Kamar Deluxe Victoria',
-      category: 'Deluxe',
-      price: 'Rp 2.850.000',
-      size: '45 m²',
-      guests: '2 Tamu',
-      description: 'Kamar elegan dengan sentuhan Victoria yang autentik, dilengkapi tempat tidur kanopi empat tiang dan pemandangan taman.',
-      features: ['King Bed', 'Bathtub Antik', 'Balkon Privat', 'Butler Service'],
-      badge: 'Paling Populer',
-    },
-    {
-      name: 'Suite Baroque Grand',
-      category: 'Suite',
-      price: 'Rp 5.500.000',
-      size: '90 m²',
-      guests: '2–4 Tamu',
-      description: 'Suite agung dengan langit-langit berornamen, ruang tamu terpisah, dan kamar mandi marmer mewah bergaya Eropa klasik.',
-      features: ['King Bed', 'Living Room', 'Marble Bathroom', 'Champagne Welcome'],
-      badge: 'Eksklusif',
-    },
-    {
-      name: 'Kamar Superior Klasik',
-      category: 'Superior',
-      price: 'Rp 1.750.000',
-      size: '32 m²',
-      guests: '2 Tamu',
-      description: 'Kamar nyaman dengan dekorasi periode yang indah, cocok untuk pasangan yang menginginkan kemewahan terjangkau.',
-      features: ['Queen Bed', 'Rain Shower', 'City View', 'Breakfast Included'],
-      badge: null,
-    },
-  ];
-
   const amenities = [
     { icon: '✦', title: 'Grand Dining', desc: 'Restoran fine dining dengan menu Perancis-Jawa klasik yang menggugah selera.' },
     { icon: '◈', title: 'Royal Spa', desc: 'Spa eksklusif dengan perawatan tradisional Jawa dan terapi modern.' },
@@ -86,7 +53,7 @@
   <div class="absolute inset-0 bg-gradient-to-b from-velvet-900 via-velvet-800 to-velvet-900"></div>
   
   <!-- Decorative circles / halos -->
-  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full border border-gold-700/10"></div>
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-175 h-175 rounded-full border border-gold-700/10"></div>
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full border border-gold-600/10"></div>
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full border border-gold-500/15"></div>
 
@@ -235,58 +202,7 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {#each rooms as room}
-        <article class="card-baroque group">
-          <!-- Image placeholder with baroque pattern -->
-          <div class="relative h-56 bg-gradient-to-br from-velvet-700 to-velvet-900 overflow-hidden">
-            <div class="absolute inset-0 bg-baroque-pattern opacity-20"></div>
-            <div class="absolute inset-0 flex items-center justify-center">
-              <span class="text-gold-600/30 text-8xl font-display select-none">❦</span>
-            </div>
-            <div class="absolute inset-0 bg-gradient-to-t from-velvet-800/80 to-transparent"></div>
-            {#if room.badge}
-              <div class="absolute top-4 right-4 bg-gold-500 text-velvet-900 text-xs tracking-widest uppercase px-3 py-1 font-body">
-                {room.badge}
-              </div>
-            {/if}
-            <div class="absolute bottom-4 left-4">
-              <span class="text-xs tracking-widest uppercase text-gold-400 font-body">{room.category}</span>
-            </div>
-          </div>
-
-          <div class="p-6">
-            <h3 class="font-display text-xl text-ivory-100 mb-2">{room.name}</h3>
-            <p class="text-sm text-ivory-600 font-body leading-relaxed mb-4">{room.description}</p>
-
-            <div class="flex gap-4 mb-4 text-xs text-ivory-700 font-body">
-              <span>📐 {room.size}</span>
-              <span>👤 {room.guests}</span>
-            </div>
-
-            <div class="flex flex-wrap gap-2 mb-5">
-              {#each room.features as f}
-                <span class="text-xs bg-velvet-700 text-ivory-500 border border-gold-700/20 px-2.5 py-1 font-body tracking-wide">
-                  {f}
-                </span>
-              {/each}
-            </div>
-
-            <div class="flex items-end justify-between border-t border-gold-700/20 pt-4">
-              <div>
-                <span class="text-xs text-ivory-700 font-body">Mulai dari</span>
-                <div class="font-display text-xl text-gold-400">{room.price}</div>
-                <span class="text-xs text-ivory-700 font-body">/ malam</span>
-              </div>
-              <a href="/booking" class="btn-outline text-xs px-4 py-2">
-                Pesan
-              </a>
-            </div>
-          </div>
-        </article>
-      {/each}
-    </div>
-
+    
     <div class="text-center mt-10">
       <a href="/kamar" class="btn-outline">Lihat Semua Kamar</a>
     </div>
