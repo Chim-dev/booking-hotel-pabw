@@ -1,42 +1,54 @@
-# sv
+# Frontend + API (SvelteKit)
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Folder ini berisi aplikasi **SvelteKit** lengkap:
+- UI frontend
+- Backend API di `src/routes/api/*`
 
-## Creating a project
+## Prasyarat
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Bun
+- PostgreSQL
 
-```sh
-# create a new project
-npx sv create my-app
+## Database Provider
+
+Kamu bisa pakai:
+- PostgreSQL lokal
+- Supabase PostgreSQL (recommended untuk cloud)
+
+## Setup
+
+```bash
+bun install
+cp .env.example .env
+bun run db:setup
 ```
 
-To recreate this project with the same configuration:
+Untuk Supabase:
+1. Ambil connection string dari **Supabase Dashboard -> Connect -> Transaction pooler**.
+2. Isi `DATABASE_URL` di `.env`.
+3. Pastikan `DATABASE_SSL=true`.
 
-```sh
-# recreate this project
-bun x sv@0.12.5 create --template demo --types jsdoc --add prettier tailwindcss="plugins:forms,typography" --install bun pabw_project
+## Development
+
+```bash
+bun run dev
 ```
 
-## Developing
+## Validasi
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```bash
+bun run check
+bun run build
 ```
 
-## Building
+## Endpoint API
 
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- `GET /api/health`
+- `GET /api/rooms`
+- `GET /api/rooms/:id`
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
+- `POST /api/bookings`
+- `POST /api/chat`

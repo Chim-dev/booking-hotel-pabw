@@ -170,7 +170,7 @@ function processTool(toolName, toolInput) {
 export async function POST({ request }) {
 	const apiKey = env.ANTHROPIC_API_KEY;
 	if (!apiKey) {
-		return json({ error: 'ANTHROPIC_API_KEY belum di-set di backend.' }, { status: 500 });
+		return json({ error: 'ANTHROPIC_API_KEY belum di-set di server.' }, { status: 500 });
 	}
 
 	try {

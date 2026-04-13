@@ -86,7 +86,7 @@
 
       rooms = Array.isArray(data.data) ? data.data.map(mapRoom) : [];
     } catch {
-      error = 'Tidak dapat terhubung ke backend.';
+      error = 'Tidak dapat terhubung ke server.';
       rooms = [];
     } finally {
       loading = false;

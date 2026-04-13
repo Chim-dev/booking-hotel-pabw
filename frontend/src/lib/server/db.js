@@ -11,8 +11,20 @@ function getConnectionConfig() {
 		throw new Error('DATABASE_URL belum di-set.');
 	}
 
+	let isSupabaseHost = false;
+	try {
+		isSupabaseHost = new URL(connectionString).hostname.includes('supabase');
+	} catch {
+		isSupabaseHost = false;
+	}
+
 	const sslEnabled =
-		env.DATABASE_SSL === 'true' || env.DATABASE_SSL === '1' || env.PGSSLMODE === 'require';
+		env.DATABASE_SSL === 'true' ||
+		env.DATABASE_SSL === '1' ||
+		env.PGSSLMODE === 'require' ||
+		/[?&]sslmode=require/i.test(connectionString) ||
+		/[?&]ssl=true/i.test(connectionString) ||
+		isSupabaseHost;
 
 	return {
 		connectionString,
