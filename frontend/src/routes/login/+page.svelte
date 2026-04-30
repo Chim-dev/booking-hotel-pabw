@@ -211,7 +211,7 @@
           <input id="pw" type={showPassword?'text':'password'} bind:value={password}
             onfocus={() => focused='pw'} onblur={() => focused=''}
             onkeydown={(e) => e.key === 'Enter' && handleLogin()}
-            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password"
+            placeholder="password" autocomplete="current-password"
             class="login-input"
             style="padding-right:1.75rem;border-bottom-color:{focused==='pw'?'rgba(212,160,23,0.45)':'rgba(80,38,12,0.7)'};"
           />
