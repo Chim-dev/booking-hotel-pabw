@@ -153,7 +153,7 @@
         }
       }
     } catch {
-      roomsError = 'Tidak dapat terhubung ke server.';
+      roomsError = 'Tidak dapat terhubung ke backend.';
       rooms = [];
     } finally {
       loadingRooms = false;
@@ -235,7 +235,7 @@
       bookingRef = data?.data?.booking?.booking_reference || '-';
       step = 3;
     } catch {
-      submitError = 'Tidak dapat terhubung ke server.';
+      submitError = 'Tidak dapat terhubung ke backend.';
     } finally {
       submitting = false;
     }

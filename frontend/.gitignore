@@ -1,4 +1,4 @@
-node_modules/
+node_modules
 
 # Output
 .output
@@ -17,10 +17,6 @@ Thumbs.db
 .env.*
 !.env.example
 !.env.test
-
-# Supabase
-.supabase/
-supabase/.temp/
 
 # Vite
 vite.config.js.timestamp-*

@@ -36,7 +36,7 @@
 
       await goto('/booking');
     } catch {
-      error = 'Tidak dapat terhubung ke server.';
+      error = 'Tidak dapat terhubung ke server backend.';
     } finally {
       loading = false;
     }

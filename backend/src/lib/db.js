@@ -1,18 +1,19 @@
-import { env } from '$env/dynamic/private';
 import { Pool } from 'pg';
 
-/** @type {any} */
+/** @type {Pool | undefined} */
 let pool;
 
 function getConnectionConfig() {
-	const connectionString = env.DATABASE_URL;
+	const connectionString = process.env.DATABASE_URL;
 
 	if (!connectionString) {
 		throw new Error('DATABASE_URL belum di-set.');
 	}
 
 	const sslEnabled =
-		env.DATABASE_SSL === 'true' || env.DATABASE_SSL === '1' || env.PGSSLMODE === 'require';
+		process.env.DATABASE_SSL === 'true' ||
+		process.env.DATABASE_SSL === '1' ||
+		process.env.PGSSLMODE === 'require';
 
 	return {
 		connectionString,
@@ -38,7 +39,7 @@ export async function query(text, params = []) {
 
 /**
  * @template T
- * @param {(client: any) => Promise<T>} callback
+ * @param {(client: import('pg').PoolClient) => Promise<T>} callback
  * @returns {Promise<T>}
  */
 export async function withTransaction(callback) {

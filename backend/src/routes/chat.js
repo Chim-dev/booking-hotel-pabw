@@ -1,7 +1,8 @@
-import { env } from '$env/dynamic/private';
-import { json } from '@sveltejs/kit';
+import { Router } from 'express';
 
-const SYSTEM_PROMPT = `Anda adalah "Isabelle", Concierge AI eksklusif dari Grand Maison, hotel mewah bergaya Victorian dan Baroque berdiri sejak 1887 di Jakarta.
+const router = Router();
+
+const SYSTEM_PROMPT = `Anda adalah "Isabelle", Concierge AI eksklusif dari Grand Maison — hotel mewah bergaya Victorian dan Baroque berdiri sejak 1887 di Jakarta.
 
 Kepribadian Anda:
 - Elegan, sopan, dan profesional namun hangat
@@ -12,10 +13,10 @@ Kepribadian Anda:
 Kamar yang tersedia:
 | Tipe               | Harga/malam     | Luas  | Maks Tamu | Unggulan                        |
 |--------------------|-----------------|-------|-----------|---------------------------------|
-| Superior Klasik    | Rp 1.750.000    | 32 m2 | 2         | Rain shower, city view, sarapan |
-| Deluxe Victoria    | Rp 2.850.000    | 45 m2 | 2         | Bathtub antik, balkon, butler   |
-| Premier Mezzanine  | Rp 3.900.000    | 60 m2 | 2         | Mezzanine, soaking tub, minibar |
-| Suite Baroque Grand| Rp 5.500.000    | 90 m2 | 4         | Living room, marble bath, 24/7 butler, champagne |
+| Superior Klasik    | Rp 1.750.000    | 32 m² | 2         | Rain shower, city view, sarapan |
+| Deluxe Victoria    | Rp 2.850.000    | 45 m² | 2         | Bathtub antik, balkon, butler   |
+| Premier Mezzanine  | Rp 3.900.000    | 60 m² | 2         | Mezzanine, soaking tub, minibar |
+| Suite Baroque Grand| Rp 5.500.000    | 90 m² | 4         | Living room, marble bath, 24/7 butler, champagne |
 
 Fasilitas Hotel:
 - Grand Dining (restoran fine dining Perancis-Jawa)
@@ -35,7 +36,7 @@ Tugas utama Anda:
 1. Sambut tamu dengan hangat
 2. Bantu pilih kamar sesuai kebutuhan, jumlah tamu, dan anggaran
 3. Jelaskan fasilitas secara detail jika ditanya
-4. Hitung total harga (harga kamar x jumlah malam + pajak 11%)
+4. Hitung total harga (harga kamar × jumlah malam + pajak 11%)
 5. Arahkan ke halaman /booking untuk menyelesaikan reservasi
 6. Jawab FAQ seputar hotel
 
@@ -103,22 +104,20 @@ const tools = [
  * @param {any} toolInput
  */
 function processTool(toolName, toolInput) {
-	/** @type {{ [key: string]: { name: string; price: number; size: string; maxGuests: number } }} */
 	const rooms = {
-		superior: { name: 'Superior Klasik', price: 1750000, size: '32 m2', maxGuests: 2 },
-		deluxe: { name: 'Deluxe Victoria', price: 2850000, size: '45 m2', maxGuests: 2 },
-		premier: { name: 'Premier Mezzanine', price: 3900000, size: '60 m2', maxGuests: 2 },
-		suite: { name: 'Suite Baroque Grand', price: 5500000, size: '90 m2', maxGuests: 4 }
+		superior: { name: 'Superior Klasik', price: 1750000, size: '32 m²', maxGuests: 2 },
+		deluxe: { name: 'Deluxe Victoria', price: 2850000, size: '45 m²', maxGuests: 2 },
+		premier: { name: 'Premier Mezzanine', price: 3900000, size: '60 m²', maxGuests: 2 },
+		suite: { name: 'Suite Baroque Grand', price: 5500000, size: '90 m²', maxGuests: 4 }
 	};
 
 	if (toolName === 'calculate_price') {
-		const room = rooms[String(toolInput.room_type)];
-		if (!room) return { error: 'room_type tidak valid' };
+		const room = rooms[toolInput.room_type];
 		const nights = toolInput.nights || 1;
 		const subtotal = room.price * nights;
 		const tax = Math.round(subtotal * 0.11);
 		const total = subtotal + tax;
-		const fmt = (/** @type {number} */ n) =>
+		const fmt = (n) =>
 			new Intl.NumberFormat('id-ID', {
 				style: 'currency',
 				currency: 'IDR',
@@ -135,9 +134,7 @@ function processTool(toolName, toolInput) {
 	}
 
 	if (toolName === 'get_room_detail') {
-		const room = rooms[String(toolInput.room_type)];
-		if (!room) return { error: 'room_type tidak valid' };
-		/** @type {{ [key: string]: string[] }} */
+		const room = rooms[toolInput.room_type];
 		const features = {
 			superior: ['Queen Bed', 'Rain Shower', 'City View', 'Sarapan Inklusif', 'WiFi'],
 			deluxe: ['King Bed', 'Bathtub Antik Clawfoot', 'Balkon Privat', 'Butler Service', 'Sarapan Inklusif'],
@@ -151,7 +148,7 @@ function processTool(toolName, toolInput) {
 				'Dining Area Privat'
 			]
 		};
-		return { ...room, features: features[String(toolInput.room_type)] };
+		return { ...room, features: features[toolInput.room_type] };
 	}
 
 	if (toolName === 'create_booking_link') {
@@ -166,16 +163,14 @@ function processTool(toolName, toolInput) {
 	return { error: 'Tool tidak ditemukan' };
 }
 
-/** @type {import('./$types').RequestHandler} */
-export async function POST({ request }) {
-	const apiKey = env.ANTHROPIC_API_KEY;
+router.post('/', async (req, res) => {
+	const apiKey = process.env.ANTHROPIC_API_KEY;
 	if (!apiKey) {
-		return json({ error: 'ANTHROPIC_API_KEY belum di-set di backend.' }, { status: 500 });
+		return res.status(500).json({ error: 'ANTHROPIC_API_KEY belum di-set di backend.' });
 	}
 
 	try {
-		const body = await request.json().catch(() => ({}));
-		const messages = Array.isArray(body?.messages) ? body.messages : [];
+		const messages = Array.isArray(req.body?.messages) ? req.body.messages : [];
 		let currentMessages = [...messages];
 
 		for (let i = 0; i < 5; i += 1) {
@@ -197,27 +192,22 @@ export async function POST({ request }) {
 
 			if (!llmResponse.ok) {
 				const errText = await llmResponse.text();
-				return json({ error: errText }, { status: 500 });
+				return res.status(500).json({ error: errText });
 			}
 
 			const data = await llmResponse.json();
-			const contentBlocks = Array.isArray(data?.content) ? data.content : [];
 
 			if (data.stop_reason === 'end_turn') {
-				const text =
-					contentBlocks.find((/** @type {{ type?: string; text?: string }} */ block) => block.type === 'text')
-						?.text ?? '';
-				return json({ reply: text });
+				const text = data.content.find((block) => block.type === 'text')?.text ?? '';
+				return res.json({ reply: text });
 			}
 
 			if (data.stop_reason === 'tool_use') {
-				const toolUseBlocks = contentBlocks.filter(
-					(/** @type {{ type?: string }} */ block) => block.type === 'tool_use'
-				);
+				const toolUseBlocks = data.content.filter((block) => block.type === 'tool_use');
 
-				currentMessages.push({ role: 'assistant', content: contentBlocks });
+				currentMessages.push({ role: 'assistant', content: data.content });
 
-				const toolResults = toolUseBlocks.map((/** @type {{ id: string; name: string; input: any }} */ block) => ({
+				const toolResults = toolUseBlocks.map((block) => ({
 					type: 'tool_result',
 					tool_use_id: block.id,
 					content: JSON.stringify(processTool(block.name, block.input))
@@ -230,9 +220,11 @@ export async function POST({ request }) {
 			break;
 		}
 
-		return json({ reply: 'Maaf, terjadi kesalahan. Silakan coba lagi.' });
+		return res.json({ reply: 'Maaf, terjadi kesalahan. Silakan coba lagi.' });
 	} catch (error) {
 		console.error('POST /api/chat error:', error);
-		return json({ error: String(error) }, { status: 500 });
+		return res.status(500).json({ error: String(error) });
 	}
-}
+});
+
+export default router;
