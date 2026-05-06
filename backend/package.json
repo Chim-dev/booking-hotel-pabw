@@ -1,0 +1,29 @@
+{
+	"name": "booking-hotel-backend-api",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev --port 3000",
+		"build": "vite build",
+		"preview": "vite preview --port 3000",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
+		"db:setup": "node scripts/db-setup.mjs",
+		"db:seed": "node scripts/db-setup.mjs --seed-only"
+	},
+	"dependencies": {
+		"bcryptjs": "^3.0.3",
+		"dotenv": "^17.2.3",
+		"jsonwebtoken": "^9.0.2",
+		"pg": "^8.16.3"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^7.0.0",
+		"@sveltejs/kit": "^2.50.2",
+		"@sveltejs/vite-plugin-svelte": "^6.2.4",
+		"svelte": "^5.51.0",
+		"svelte-check": "^4.4.2",
+		"typescript": "^5.9.3",
+		"vite": "^7.3.1"
+	}
+}

@@ -1,5 +1,6 @@
 import { env } from '$env/dynamic/private';
-import { Pool } from 'pg';
+import pg from 'pg';
+const { Pool } = pg;
 
 /** @type {any} */
 let pool;

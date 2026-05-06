@@ -1,0 +1,30 @@
+{
+	"/": [],
+	"/api/auth/login": [
+		"src/routes/api/auth/login/+server.js"
+	],
+	"/api/auth/logout": [
+		"src/routes/api/auth/logout/+server.js"
+	],
+	"/api/auth/me": [
+		"src/routes/api/auth/me/+server.js"
+	],
+	"/api/auth/register": [
+		"src/routes/api/auth/register/+server.js"
+	],
+	"/api/bookings": [
+		"src/routes/api/bookings/+server.js"
+	],
+	"/api/chat": [
+		"src/routes/api/chat/+server.js"
+	],
+	"/api/health": [
+		"src/routes/api/health/+server.js"
+	],
+	"/api/rooms": [
+		"src/routes/api/rooms/+server.js"
+	],
+	"/api/rooms/[id]": [
+		"src/routes/api/rooms/[id]/+server.js"
+	]
+}
