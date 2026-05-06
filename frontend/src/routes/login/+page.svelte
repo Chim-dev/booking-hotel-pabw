@@ -34,7 +34,11 @@
         return;
       }
 
-      await goto('/booking');
+      if (data.data?.user?.role === 'admin') {
+        await goto('/admin');
+      } else {
+        await goto('/booking');
+      }
     } catch {
       error = 'Tidak dapat terhubung ke server backend.';
     } finally {

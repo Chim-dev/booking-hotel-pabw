@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { json } from '@sveltejs/kit';
 import { getAuthenticatedUser } from '$lib/server/auth';
 import { ApiError } from '$lib/server/api-error';
-import { withTransaction } from '$lib/server/db';
+import { query, withTransaction } from '$lib/server/db';
 import {
 	differenceInDays,
 	normalizeRoomLookup,
@@ -14,6 +14,31 @@ import {
 
 const TAX_RATE = 0.11;
 const VALID_PAYMENT_METHODS = new Set(['transfer', 'card', 'cash']);
+
+/** @type {import('./$types').RequestHandler} */
+export async function GET({ cookies }) {
+	const authUser = getAuthenticatedUser(cookies);
+	if (authUser?.role !== 'admin') {
+		return json({ error: 'Unauthorized.' }, { status: 401 });
+	}
+
+	try {
+		const { rows } = await query(
+			`SELECT 
+				b.*,
+				r.name as room_name,
+				r.code as room_code
+			 FROM bookings b
+			 JOIN rooms r ON b.room_id = r.id
+			 ORDER BY b.created_at DESC`
+		);
+
+		return json({ data: rows });
+	} catch (error) {
+		console.error('GET /api/bookings error:', error);
+		return json({ error: 'Gagal mengambil data booking.' }, { status: 500 });
+	}
+}
 
 function generateBookingReference() {
 	return `GM-${Date.now().toString(36).toUpperCase()}-${randomBytes(2).toString('hex').toUpperCase()}`;
