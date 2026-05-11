@@ -1,5 +1,9 @@
 {
-  "dependencies": {
-    "@supabase/supabase-js": "^2.103.0"
+  "name": "booking-hotel-pabw",
+  "private": true,
+  "scripts": {
+    "install:all": "cd backend && bun install && cd ../frontend && bun install",
+    "dev:backend": "cd backend && bun run dev",
+    "dev:frontend": "cd frontend && bun run dev"
   }
 }

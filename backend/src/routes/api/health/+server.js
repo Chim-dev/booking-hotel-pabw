@@ -4,6 +4,6 @@ import { json } from '@sveltejs/kit';
 export async function GET() {
 	return json({
 		ok: true,
-		service: 'booking-hotel-sveltekit'
+		service: 'booking-hotel-backend-api (SvelteKit)'
 	});
 }

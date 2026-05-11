@@ -1,31 +1,48 @@
 # Booking Hotel PABW
 
-Project ini sekarang memakai satu framework: **SvelteKit**.
-Frontend dan backend API dijalankan dari folder `frontend`.
+Project ini telah dipisah menjadi dua project **SvelteKit** yang bekerja secara independen:
 
-## Stack
+## Struktur Project
 
-- Framework: SvelteKit
-- Runtime + package manager: Bun
-- Database: PostgreSQL (local atau Supabase)
+- `frontend/`: SvelteKit (UI & Client-side logic)
+- `backend/`: SvelteKit (API-only backend)
 
-## Menjalankan Project
+## Kenapa dipisah?
+Meskipun keduanya menggunakan SvelteKit, pemisahan ini memungkinkan:
+1. Backend fokus pada logika data dan keamanan (API-only).
+2. Frontend fokus pada pengalaman pengguna (UI).
+3. Kemudahan jika ingin mengganti salah satu bagian di masa depan tanpa mengganggu bagian lainnya.
+
+## Persiapan
+
+1. **Database**: Pastikan PostgreSQL sudah berjalan.
+2. **Backend**:
+   ```bash
+   cd backend
+   bun install
+   cp .env.example .env
+   # Sesuaikan DATABASE_URL di .env
+   bun run db:setup
+   bun run dev
+   ```
+3. **Frontend**:
+   ```bash
+   cd frontend
+   bun install
+   cp .env.example .env
+   # Pastikan PUBLIC_BACKEND_URL mengarah ke http://localhost:3000
+   bun run dev
+   ```
+
+## Menjalankan Bersama
 
 ```bash
-cd frontend
-bun install
-cp .env.example .env
-bun run db:setup
-bun run dev
+# Terminal 1
+cd backend && bun run dev
+
+# Terminal 2
+cd frontend && bun run dev
 ```
 
 App: `http://localhost:5173`  
-API: `http://localhost:5173/api/*`
-
-## Script Utama (di `frontend`)
-
-- `bun run dev`
-- `bun run check`
-- `bun run build`
-- `bun run db:setup`
-- `bun run db:seed`
+API: `http://localhost:3000/api/*`
