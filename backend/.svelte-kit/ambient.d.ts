@@ -38,20 +38,19 @@
  * The above values will be the same _even if_ different values for `ENVIRONMENT` or `PUBLIC_BASE_URL` are set at runtime, as they are statically replaced in your code with their build time values.
  */
 declare module '$env/static/private' {
+	export const PORT: string;
 	export const NODE_ENV: string;
+	export const FRONTEND_URL: string;
 	export const DATABASE_URL: string;
 	export const DATABASE_SSL: string;
 	export const JWT_SECRET: string;
 	export const JWT_EXPIRES_IN: string;
-	export const JWT_COOKIE_MAX_AGE: string;
 	export const BCRYPT_SALT_ROUNDS: string;
 	export const OLLAMA_BASE_URL: string;
 	export const OLLAMA_MODEL: string;
 	export const ALLUSERSPROFILE: string;
 	export const APPDATA: string;
-	export const BUNDLED_DEBUGPY_PATH: string;
-	export const ChocolateyInstall: string;
-	export const ChocolateyLastPathUpdate: string;
+	export const CABAL_DIR: string;
 	export const CHROME_CRASHPAD_PIPE_NAME: string;
 	export const COLORTERM: string;
 	export const CommonProgramFiles: string;
@@ -59,20 +58,16 @@ declare module '$env/static/private' {
 	export const COMPUTERNAME: string;
 	export const ComSpec: string;
 	export const DriverData: string;
-	export const EFC_3516: string;
+	export const EFC_20148: string;
 	export const FPS_BROWSER_APP_PROFILE_STRING: string;
 	export const FPS_BROWSER_USER_PROFILE_STRING: string;
-	export const GIT_ASKPASS: string;
-	export const GK_GL_ADDR: string;
-	export const GK_GL_PATH: string;
+	export const GHCUP_INSTALL_BASE_PREFIX: string;
+	export const GHCUP_MSYS2_ENV: string;
 	export const HOMEDRIVE: string;
 	export const HOMEPATH: string;
-	export const INTEL_DEV_REDIST: string;
-	export const JAVA_HOME: string;
 	export const LANG: string;
 	export const LOCALAPPDATA: string;
 	export const LOGONSERVER: string;
-	export const MIC_LD_LIBRARY_PATH: string;
 	export const NODE: string;
 	export const npm_command: string;
 	export const npm_config_local_prefix: string;
@@ -85,11 +80,12 @@ declare module '$env/static/private' {
 	export const npm_package_name: string;
 	export const npm_package_version: string;
 	export const NUMBER_OF_PROCESSORS: string;
-	export const OPENSSL_ia32cap: string;
+	export const OneDrive: string;
+	export const OnlineServices: string;
 	export const OS: string;
-	export const PAI_MODEL_DIR: string;
 	export const Path: string;
 	export const PATHEXT: string;
+	export const platformcode: string;
 	export const PROCESSOR_ARCHITECTURE: string;
 	export const PROCESSOR_IDENTIFIER: string;
 	export const PROCESSOR_LEVEL: string;
@@ -98,12 +94,10 @@ declare module '$env/static/private' {
 	export const ProgramFiles: string;
 	export const ProgramW6432: string;
 	export const PSModulePath: string;
+	export const PT8HOME: string;
 	export const PUBLIC: string;
 	export const PWD: string;
-	export const PYDEVD_DISABLE_FILE_VALIDATION: string;
-	export const PYTHONSTARTUP: string;
-	export const PYTHON_BASIC_REPL: string;
-	export const RG_GPU_FRAMEWORK_ENGINE_RESOURCEDIR: string;
+	export const RegionCode: string;
 	export const SESSIONNAME: string;
 	export const SystemDrive: string;
 	export const SystemRoot: string;
@@ -115,19 +109,13 @@ declare module '$env/static/private' {
 	export const USERDOMAIN_ROAMINGPROFILE: string;
 	export const USERNAME: string;
 	export const USERPROFILE: string;
+	export const VBOX_HWVIRTEX_IGNORE_SVM_IN_USE: string;
 	export const VITE_USER_NODE_ENV: string;
-	export const VS140COMNTOOLS: string;
 	export const VSCODE_A11Y_MODE: string;
-	export const VSCODE_DEBUGPY_ADAPTER_ENDPOINTS: string;
-	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
-	export const VSCODE_GIT_ASKPASS_MAIN: string;
-	export const VSCODE_GIT_ASKPASS_NODE: string;
-	export const VSCODE_GIT_IPC_HANDLE: string;
 	export const VSCODE_INJECTION: string;
 	export const VSCODE_NONCE: string;
 	export const VSCODE_STABLE: string;
 	export const windir: string;
-	export const ZES_ENABLE_SYSMAN: string;
 }
 
 /**
@@ -214,20 +202,19 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
+		PORT: string;
 		NODE_ENV: string;
+		FRONTEND_URL: string;
 		DATABASE_URL: string;
 		DATABASE_SSL: string;
 		JWT_SECRET: string;
 		JWT_EXPIRES_IN: string;
-		JWT_COOKIE_MAX_AGE: string;
 		BCRYPT_SALT_ROUNDS: string;
 		OLLAMA_BASE_URL: string;
 		OLLAMA_MODEL: string;
 		ALLUSERSPROFILE: string;
 		APPDATA: string;
-		BUNDLED_DEBUGPY_PATH: string;
-		ChocolateyInstall: string;
-		ChocolateyLastPathUpdate: string;
+		CABAL_DIR: string;
 		CHROME_CRASHPAD_PIPE_NAME: string;
 		COLORTERM: string;
 		CommonProgramFiles: string;
@@ -235,20 +222,16 @@ declare module '$env/dynamic/private' {
 		COMPUTERNAME: string;
 		ComSpec: string;
 		DriverData: string;
-		EFC_3516: string;
+		EFC_20148: string;
 		FPS_BROWSER_APP_PROFILE_STRING: string;
 		FPS_BROWSER_USER_PROFILE_STRING: string;
-		GIT_ASKPASS: string;
-		GK_GL_ADDR: string;
-		GK_GL_PATH: string;
+		GHCUP_INSTALL_BASE_PREFIX: string;
+		GHCUP_MSYS2_ENV: string;
 		HOMEDRIVE: string;
 		HOMEPATH: string;
-		INTEL_DEV_REDIST: string;
-		JAVA_HOME: string;
 		LANG: string;
 		LOCALAPPDATA: string;
 		LOGONSERVER: string;
-		MIC_LD_LIBRARY_PATH: string;
 		NODE: string;
 		npm_command: string;
 		npm_config_local_prefix: string;
@@ -261,11 +244,12 @@ declare module '$env/dynamic/private' {
 		npm_package_name: string;
 		npm_package_version: string;
 		NUMBER_OF_PROCESSORS: string;
-		OPENSSL_ia32cap: string;
+		OneDrive: string;
+		OnlineServices: string;
 		OS: string;
-		PAI_MODEL_DIR: string;
 		Path: string;
 		PATHEXT: string;
+		platformcode: string;
 		PROCESSOR_ARCHITECTURE: string;
 		PROCESSOR_IDENTIFIER: string;
 		PROCESSOR_LEVEL: string;
@@ -274,12 +258,10 @@ declare module '$env/dynamic/private' {
 		ProgramFiles: string;
 		ProgramW6432: string;
 		PSModulePath: string;
+		PT8HOME: string;
 		PUBLIC: string;
 		PWD: string;
-		PYDEVD_DISABLE_FILE_VALIDATION: string;
-		PYTHONSTARTUP: string;
-		PYTHON_BASIC_REPL: string;
-		RG_GPU_FRAMEWORK_ENGINE_RESOURCEDIR: string;
+		RegionCode: string;
 		SESSIONNAME: string;
 		SystemDrive: string;
 		SystemRoot: string;
@@ -291,19 +273,13 @@ declare module '$env/dynamic/private' {
 		USERDOMAIN_ROAMINGPROFILE: string;
 		USERNAME: string;
 		USERPROFILE: string;
+		VBOX_HWVIRTEX_IGNORE_SVM_IN_USE: string;
 		VITE_USER_NODE_ENV: string;
-		VS140COMNTOOLS: string;
 		VSCODE_A11Y_MODE: string;
-		VSCODE_DEBUGPY_ADAPTER_ENDPOINTS: string;
-		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
-		VSCODE_GIT_ASKPASS_MAIN: string;
-		VSCODE_GIT_ASKPASS_NODE: string;
-		VSCODE_GIT_IPC_HANDLE: string;
 		VSCODE_INJECTION: string;
 		VSCODE_NONCE: string;
 		VSCODE_STABLE: string;
 		windir: string;
-		ZES_ENABLE_SYSMAN: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}

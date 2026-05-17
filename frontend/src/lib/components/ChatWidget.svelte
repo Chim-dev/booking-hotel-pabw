@@ -52,10 +52,21 @@
       });
 
       const data = await res.json();
+      const rawReply = data.reply ?? 'Maaf, terjadi gangguan. Mohon coba lagi.';
+      const bookingLinkFromApi = typeof data.booking_url === 'string' ? data.booking_url.trim() : '';
+      const bookingLink = bookingLinkFromApi || extractBookingLink(rawReply) || '';
+      const reply = sanitizeAssistantReply(rawReply);
       messages = [
         ...messages,
-        { role: 'assistant', content: data.reply ?? 'Maaf, terjadi gangguan. Mohon coba lagi.' }
+        { role: 'assistant', content: reply }
       ];
+
+      if (shouldAutoRedirect(text, rawReply, bookingLink)) {
+        const redirectTarget = bookingLink || '/booking';
+        window.setTimeout(() => {
+          window.location.assign(redirectTarget);
+        }, 1200);
+      }
     } catch {
       messages = [
         ...messages,
@@ -106,8 +117,42 @@
    * @param {string} text
    */
   function extractBookingLink(text) {
-    const match = text.match(/\/booking\?[^\s"')]+/);
+    const match = text.match(/\/booking(?:\?[^\s"')\]]+)?/i);
     return match ? match[0] : null;
+  }
+
+  /**
+   * @param {string} text
+   */
+  function sanitizeAssistantReply(text) {
+    return text
+      .replace(/\[link[_\s-]*ke[_\s-]*booking\]|\[link booking\]/gi, '')
+      .replace(/\/booking(?:\?[^\s"')\]]+)?/gi, '')
+      .replace(/https?:\/\/[^\s)]+/gi, '')
+      .replace(/<\s*create_booking_link\([^>]*\)\s*>/gi, '')
+      .replace(/create_booking_link\([^)]*\)/gi, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
+
+  /**
+   * @param {string} userText
+   * @param {string} reply
+   * @param {string} bookingLink
+   */
+  function shouldAutoRedirect(userText, reply, bookingLink) {
+    if (bookingLink) return true;
+
+    const userAgrees = /(iya|ya|setuju|oke|ok|lanjut|pesan|booking|reservasi)/i.test(userText);
+    const hasBookingKeyword = /(reservasi|booking)/i.test(reply);
+    const hasHandoffKeyword = /(diproses|diteruskan|dikonfirmasi|berhasil|lanjut|lanjutkan|selesaikan|klik|halaman booking)/i.test(reply);
+    const containsBookingPlaceholderOrTool =
+      /\[link[_\s-]*ke[_\s-]*booking\]|\[link booking\]/i.test(reply) ||
+      /create_booking_link\s*\(/i.test(reply) ||
+      /https?:\/\/[^\s)]*create_booking_link/i.test(reply);
+    const aiConfirmedBooking = (hasBookingKeyword && hasHandoffKeyword) || containsBookingPlaceholderOrTool;
+
+    return userAgrees && aiConfirmedBooking;
   }
 
   $effect(() => {

@@ -120,9 +120,83 @@ function parseJsonObject(text) {
 			const parsed = JSON.parse(candidate);
 			return parsed && typeof parsed === 'object' ? parsed : null;
 		} catch {
+			const lines = trimmed
+				.split('\n')
+				.map((line) => line.trim())
+				.filter((line) => line.startsWith('{') && line.endsWith('}'));
+
+			for (const line of lines) {
+				try {
+					const parsed = JSON.parse(line);
+					if (parsed && typeof parsed === 'object') {
+						return parsed;
+					}
+				} catch {
+					// ignore invalid line candidates
+				}
+			}
 			return null;
 		}
 	}
+}
+
+/**
+ * @param {string} text
+ */
+function extractBookingUrl(text) {
+	const match = toText(text).match(/\/booking(?:\?[^\s"')\]]+)?/i);
+	return match ? toText(match[0]) : '';
+}
+
+/**
+ * @param {string} text
+ */
+function parseCreateBookingLinkCall(text) {
+	const match = toText(text).match(/create_booking_link\s*\(([^)]*)\)/i);
+	if (!match) return null;
+
+	const args = match[1]
+		.split(',')
+		.map((part) => part.trim())
+		.filter(Boolean);
+
+	/** @type {{ room_type?: string; check_in?: string; check_out?: string; guests?: number }} */
+	const input = {};
+	for (const arg of args) {
+		const kv = arg.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*['"]?([^'"]+)['"]?$/);
+		if (!kv) continue;
+		const key = kv[1].toLowerCase();
+		const value = toText(kv[2]);
+		if (!value) continue;
+		if (key === 'room_type' || key === 'check_in' || key === 'check_out') input[key] = value;
+		if (key === 'guests') {
+			const guests = Math.trunc(toNumber(value));
+			if (Number.isFinite(guests) && guests > 0) input.guests = guests;
+		}
+	}
+
+	return input.room_type ? input : null;
+}
+
+/**
+ * @param {string} reply
+ * @param {string | null} bookingUrl
+ */
+function enrichReplyWithBookingLink(reply, bookingUrl) {
+	const cleanReply = toText(reply);
+	const url = toText(bookingUrl);
+	if (!url) return cleanReply;
+
+	const hasPlaceholder = /\[(link[_\s-]*ke[_\s-]*booking|link booking)\]/i.test(cleanReply);
+	if (hasPlaceholder) {
+		return cleanReply.replace(/\[(link[_\s-]*ke[_\s-]*booking|link booking)\]/gi, url);
+	}
+
+	if (extractBookingUrl(cleanReply)) {
+		return cleanReply;
+	}
+
+	return `${cleanReply}\n\nSilakan lanjutkan reservasi Anda di: ${url}`;
 }
 
 async function getRoomsFromDatabase() {
@@ -396,6 +470,8 @@ export async function POST({ request }) {
 	let messages = [];
 	/** @type {any[]} */
 	let rooms = [];
+	/** @type {string | null} */
+	let bookingUrl = null;
 
 	try {
 		const body = await request.json().catch(() => ({}));
@@ -420,18 +496,46 @@ ${TOOL_INSTRUCTIONS}`;
 			const payload = parseJsonObject(modelOutput);
 
 			if (!payload) {
-				return json({ reply: modelOutput });
+				const extractedUrl = extractBookingUrl(modelOutput);
+				const effectiveUrl = extractedUrl || bookingUrl || null;
+				return json({
+					reply: enrichReplyWithBookingLink(modelOutput, effectiveUrl),
+					booking_url: effectiveUrl
+				});
 			}
 
 			const action = toText(payload.action).toLowerCase();
 			if (action === 'respond') {
-				const reply = toText(payload.reply);
-				return json({ reply: reply || 'Maaf, saya belum bisa memproses permintaan Anda saat ini.' });
+				let reply = toText(payload.reply);
+				if (!bookingUrl) {
+					const pseudoInput = parseCreateBookingLinkCall(reply);
+					if (pseudoInput) {
+						const created = createBookingLink(pseudoInput);
+						if (created && typeof created === 'object' && 'booking_url' in created) {
+							bookingUrl = toText(created.booking_url) || bookingUrl;
+						}
+					}
+				}
+				const embeddedUrl = extractBookingUrl(reply);
+				const effectiveUrl = bookingUrl || embeddedUrl || null;
+				reply = enrichReplyWithBookingLink(reply, effectiveUrl);
+				return json({
+					reply: reply || 'Maaf, saya belum bisa memproses permintaan Anda saat ini.',
+					booking_url: effectiveUrl
+				});
 			}
 
 			if (action === 'tool') {
 				const toolName = toText(payload.tool).toLowerCase();
 				const toolResult = runTool(toolName, payload.input, rooms);
+				if (
+					toolName === 'create_booking_link' &&
+					toolResult &&
+					typeof toolResult === 'object' &&
+					'booking_url' in toolResult
+				) {
+					bookingUrl = toText(toolResult.booking_url) || bookingUrl;
+				}
 
 				agentMessages.push({
 					role: 'assistant',
@@ -444,8 +548,14 @@ ${TOOL_INSTRUCTIONS}`;
 				continue;
 			}
 
+			const fallbackReply = toText(payload.reply) || modelOutput;
+			const fallbackUrl = bookingUrl || extractBookingUrl(fallbackReply) || null;
 			return json({
-				reply: 'Maaf, saya mengalami kendala memahami aksi internal. Silakan coba pertanyaan lain.'
+				reply: enrichReplyWithBookingLink(
+					fallbackReply || 'Maaf, saya mengalami kendala memahami aksi internal. Silakan coba pertanyaan lain.',
+					fallbackUrl
+				),
+				booking_url: fallbackUrl
 			});
 		}
 
